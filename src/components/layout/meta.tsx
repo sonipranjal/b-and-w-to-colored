@@ -1,9 +1,9 @@
 import Head from "next/head";
 
-const DOMAIN = "https://precedent.dev";
+const DOMAIN = "https://localhost:3000";
 
 export default function Meta({
-  title = "BwToColor - Convert your black and white images to color",
+  title = "BwToColor - Convert your black and white images to colored",
   description = "BwToColor is built on top of NextJs, tRPC, Tailwind, Prisma, Replicate and NextAuth.",
   image = `${DOMAIN}/api/og`,
 }: {

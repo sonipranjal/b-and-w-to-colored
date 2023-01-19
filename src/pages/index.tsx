@@ -35,7 +35,7 @@ const Home: NextPage = () => {
         >
           <FaTwitter className="h-5 w-5 text-[#1d9bf0]" />
           <p className="text-sm font-semibold text-[#1d9bf0]">
-            Introducing Your Next Project
+            Introducing Black and White to Colored
           </p>
         </motion.a>
         <motion.h1
