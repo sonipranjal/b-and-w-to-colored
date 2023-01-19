@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-const DOMAIN = "https://localhost:3000";
+const DOMAIN = "bwtocolor.vercel.app";
 
 export default function Meta({
   title = "BwToColor - Convert your black and white images to colored",
