@@ -1,5 +1,4 @@
-import { useSession } from "next-auth/react/index.js";
-import Image from "next/image.js";
+import Image from "next/image";
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { UploadDropzone } from "react-uploader";
@@ -20,26 +19,29 @@ const options = {
 };
 
 const UploadFile = () => {
-  const [loading, setLoading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState("");
   const [coloredImages, setColoredImages] = useState<string[]>([]);
 
-  const paintImage = api.ai.paintImage.useMutation();
+  const paintImage = api.ai.paintImage.useMutation({
+    onSuccess: ({ images, message }) => {
+      if (message) {
+        return toast.error("failed to convert image");
+      }
 
-  const getPaintedPhoto = async (imageUrl: string) => {
-    setLoading(true);
-    const { images, message } = await paintImage.mutateAsync({
+      if (images) {
+        setColoredImages(images);
+        toast.success("🥳 your colored images are ready!");
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const getPaintedPhoto = (imageUrl: string) => {
+    paintImage.mutate({
       imageUrl,
     });
-
-    if (message) {
-      return toast.error("failed to convert image");
-    }
-
-    if (images) {
-      setColoredImages(images);
-    }
-    setLoading(false);
   };
 
   return (
@@ -79,7 +81,7 @@ const UploadFile = () => {
               Colored Photos
             </h2>
             <div className="flex flex-row flex-wrap items-center justify-center gap-5">
-              {loading && (
+              {paintImage.isLoading && (
                 <div>
                   <LoadingCircle />
                 </div>

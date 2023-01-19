@@ -19,11 +19,15 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
 
+import { createTRPCUpstashLimiter } from "@trpc-limiter/upstash";
+import { type NextApiRequest } from "next";
+
 import { getServerAuthSession } from "../auth";
 import { prisma } from "../db";
 
 type CreateContextOptions = {
   session: Session | null;
+  req: NextApiRequest;
 };
 
 /**
@@ -39,6 +43,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    req: opts.req,
   };
 };
 
@@ -55,6 +60,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    req,
   });
 };
 
@@ -72,6 +78,26 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
   errorFormatter({ shape }) {
     return shape;
   },
+});
+
+const getFingerPrint = (req: NextApiRequest) => {
+  const ip = req.socket.remoteAddress ?? req.headers["x-forwarded-for"];
+  return (Array.isArray(ip) ? ip[0] : ip) ?? "127.0.0.1";
+};
+
+export const rateLimiter = createTRPCUpstashLimiter({
+  root: t,
+  fingerprint: (ctx) => getFingerPrint(ctx.req),
+  windowMs: 60000,
+  message: (hitInfo) => {
+    throw new TRPCError({
+      code: "TOO_MANY_REQUESTS",
+      message: `Too many requests, please try again later. ${Math.ceil(
+        (hitInfo.reset - Date.now()) / 1000
+      )}`,
+    });
+  },
+  max: 1,
 });
 
 /**
@@ -94,7 +120,7 @@ export const createTRPCRouter = t.router;
  * tRPC API. It does not guarantee that a user querying is authorized, but you
  * can still access user session data if they are logged in
  */
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(rateLimiter);
 
 /**
  * Reusable middleware that enforces users are logged in before running the
@@ -121,4 +147,6 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const protectedProcedure = t.procedure
+  .use(enforceUserIsAuthed)
+  .use(rateLimiter);

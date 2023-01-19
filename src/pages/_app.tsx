@@ -6,6 +6,7 @@ import localFont from "@next/font/local";
 import { Inter } from "@next/font/google";
 import cx from "classnames";
 import { Analytics } from "@vercel/analytics/react";
+import { Toaster } from "react-hot-toast";
 
 import { api } from "../utils/api";
 
@@ -27,6 +28,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      <Toaster />
       <RWBProvider>
         <main className={cx(sfPro.variable, inter.variable)}>
           <Component {...pageProps} />

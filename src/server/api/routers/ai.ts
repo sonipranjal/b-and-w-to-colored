@@ -22,7 +22,7 @@ type REPLICATE_RESPONSE = {
 export const aiRouter = createTRPCRouter({
   paintImage: publicProcedure
     .input(z.object({ imageUrl: z.string().url() }))
-    .mutation(async ({ input: { imageUrl }, ctx: { prisma } }) => {
+    .mutation(async ({ input: { imageUrl } }) => {
       const { data: startPredictionData }: { data: REPLICATE_RESPONSE } =
         await axios.post(
           env.REPLICATE_API,
