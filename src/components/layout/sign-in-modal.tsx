@@ -18,7 +18,7 @@ const SignInModal = ({
     <Modal showModal={showSignInModal} setShowModal={setShowSignInModal}>
       <div className="w-full overflow-hidden shadow-xl md:max-w-md md:rounded-2xl md:border md:border-gray-200">
         <div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center md:px-16">
-          <a href="https://precedent.dev">
+          {/* <a href="https://precedent.dev">
             <Image
               src="/logo.png"
               alt="Logo"
@@ -26,11 +26,10 @@ const SignInModal = ({
               width={20}
               height={20}
             />
-          </a>
+          </a> */}
           <h3 className="font-display text-2xl font-bold">Sign In</h3>
           <p className="text-sm text-gray-500">
-            This is strictly for demo purposes - only your email and profile
-            picture will be stored.
+            Only your email and profile picture will be stored.
           </p>
         </div>
 

@@ -1,14 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { FADE_IN_ANIMATION_SETTINGS } from "../../constants";
 import useScroll from "../../hooks/use-scroll";
 
 import Meta from "./meta";
-import { useSignInModal } from "./sign-in-modal";
-import UserDropdown from "./user-dropdown";
 
 export default function Layout({
   meta,
@@ -21,14 +17,12 @@ export default function Layout({
   };
   children: ReactNode;
 }) {
-  const { data: session, status } = useSession();
-  const { SignInModal, setShowSignInModal } = useSignInModal();
   const scrolled = useScroll(50);
 
   return (
     <>
       <Meta {...meta} />
-      <SignInModal />
+
       <div className="fixed h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-cyan-100" />
       <header
         className={`fixed top-0 w-full ${
@@ -50,17 +44,14 @@ export default function Layout({
           </Link>
           <div>
             <AnimatePresence>
-              {!session && status !== "loading" ? (
-                <motion.button
-                  className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
-                  onClick={() => setShowSignInModal(true)}
-                  {...FADE_IN_ANIMATION_SETTINGS}
-                >
-                  Sign In
-                </motion.button>
-              ) : (
-                <UserDropdown />
-              )}
+              <motion.a
+                className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
+                href="https://clubofcoders.com"
+                target={"_blank"}
+                {...FADE_IN_ANIMATION_SETTINGS}
+              >
+                By Club Of Coders
+              </motion.a>
             </AnimatePresence>
           </div>
         </div>
@@ -70,14 +61,25 @@ export default function Layout({
       </main>
       <div className="absolute w-full border-t border-gray-200 bg-white py-5 text-center">
         <p className="text-gray-500">
-          A free template by{" "}
+          A open source project by{" "}
           <a
             className="font-medium text-gray-800 underline transition-colors"
-            href="https://twitter.com/steventey"
+            href="https://twitter.com/pranjalsoni_"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Steven Tey
+            Pranjal Soni
+          </a>
+        </p>
+        <p>
+          Inspired from{" "}
+          <a
+            className="font-medium text-gray-800 underline transition-colors"
+            href="https://www.restorephotos.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Restore photos
           </a>
         </p>
       </div>
